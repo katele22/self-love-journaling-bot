@@ -1,0 +1,525 @@
+{
+  "name": "Daily Journal Reminder System",
+  "nodes": [
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "triggerAtHour": 21
+            }
+          ]
+        }
+      },
+      "id": "485016ae-93b4-41ab-aaee-934e5b9fd1b1",
+      "name": "Daily at 9 PM",
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -208,
+        48
+      ]
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1giWsv3tA72G_atS6xNzPxCDnRXJZSn6Yf45rW7Q1-nY",
+          "mode": "list",
+          "cachedResultName": "Discord friends ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1giWsv3tA72G_atS6xNzPxCDnRXJZSn6Yf45rW7Q1-nY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1giWsv3tA72G_atS6xNzPxCDnRXJZSn6Yf45rW7Q1-nY/edit#gid=0"
+        },
+        "options": {}
+      },
+      "id": "43889d3f-8995-4cff-b790-dd34727394cc",
+      "name": "Get All Friends",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        16,
+        48
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "REDACTED",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "loose",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "leftValue": "={{ $json['last submission date'].split('T')[0] }}",
+              "rightValue": "={{ $today.toFormat(\"yyyy-MM-dd\") }}",
+              "operator": {
+                "type": "string",
+                "operation": "notEquals"
+              },
+              "id": "a3420292-ee87-4672-a34e-a0e619173a78"
+            }
+          ],
+          "combinator": "and"
+        },
+        "looseTypeValidation": true,
+        "options": {}
+      },
+      "id": "1cee8ccc-e37c-4478-b143-093bc4c9f0ac",
+      "name": "Filter Who Forgot to Journal",
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        240,
+        48
+      ]
+    },
+    {
+      "parameters": {
+        "operation": "update",
+        "documentId": {
+          "__rl": true,
+          "value": "1giWsv3tA72G_atS6xNzPxCDnRXJZSn6Yf45rW7Q1-nY",
+          "mode": "list",
+          "cachedResultName": "Discord friends ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1giWsv3tA72G_atS6xNzPxCDnRXJZSn6Yf45rW7Q1-nY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1giWsv3tA72G_atS6xNzPxCDnRXJZSn6Yf45rW7Q1-nY/edit#gid=0"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "Name": "={{ $json.body['What is your discord username? (this needs to be exact)'] }}",
+            "last submission date": "={{ $json.body.timestamp }}",
+            "response": "={{ $json.body['Prompt of the day: \"Evasive action: What\\'s the most significant secret you\\'ve ever kept? Did the truth ever come out?\"'] }}"
+          },
+          "matchingColumns": [
+            "Name"
+          ],
+          "schema": [
+            {
+              "id": "ID",
+              "displayName": "ID",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": true
+            },
+            {
+              "id": "Name",
+              "displayName": "Name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "last submission date",
+              "displayName": "last submission date",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "response",
+              "displayName": "response",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true,
+              "removed": false
+            },
+            {
+              "id": "row_number",
+              "displayName": "row_number",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "number",
+              "canBeUsedToMatch": true,
+              "readOnly": true,
+              "removed": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "7d3651b7-38bb-430c-bafd-5787f6fc83ec",
+      "name": "Update Last Submission Date",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        16,
+        272
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "REDACTED",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "journal-submission",
+        "options": {
+          "noResponseBody": false,
+          "responseData": "=Thank you for practicing self-love today!"
+        }
+      },
+      "id": "fd754563-7d32-450d-a91b-1487b07458b4",
+      "name": "Google Forms Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        -208,
+        464
+      ],
+      "webhookId": "d2e83078-fa55-4548-8f73-3ef0d6a451d1"
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1giWsv3tA72G_atS6xNzPxCDnRXJZSn6Yf45rW7Q1-nY",
+          "mode": "list",
+          "cachedResultName": "Discord friends ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1giWsv3tA72G_atS6xNzPxCDnRXJZSn6Yf45rW7Q1-nY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1giWsv3tA72G_atS6xNzPxCDnRXJZSn6Yf45rW7Q1-nY/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "ID",
+              "lookupValue": "1414059203550646423"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "befe3923-e931-40c5-ad13-e066206f1a95",
+      "name": "Get my reponse",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        16,
+        656
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "REDACTED",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "documentId": {
+          "__rl": true,
+          "value": "1giWsv3tA72G_atS6xNzPxCDnRXJZSn6Yf45rW7Q1-nY",
+          "mode": "list",
+          "cachedResultName": "Discord friends ",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1giWsv3tA72G_atS6xNzPxCDnRXJZSn6Yf45rW7Q1-nY/edit?usp=drivesdk"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "gid=0",
+          "mode": "list",
+          "cachedResultName": "Sheet1",
+          "cachedResultUrl": "https://docs.google.com/spreadsheets/d/1giWsv3tA72G_atS6xNzPxCDnRXJZSn6Yf45rW7Q1-nY/edit#gid=0"
+        },
+        "filtersUI": {
+          "values": [
+            {
+              "lookupColumn": "Name",
+              "lookupValue": "={{ $json.body['What is your discord username? (this needs to be exact)'] }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "d2df52ba-8e7c-4cd5-a9c2-742c77b4f22d",
+      "name": "Get user's id using user's name",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.7,
+      "position": [
+        16,
+        464
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "8nZRcw3zYepWTcTS",
+          "name": "Google Sheets account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "mode": "combine",
+        "combineBy": "combineByPosition",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        240,
+        560
+      ],
+      "id": "bebce5fa-42af-4a4d-8f66-6b9dd8e9c7e8",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "content": "merge 2 data so that message node only runs once",
+        "height": 80
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        176,
+        752
+      ],
+      "id": "54a65969-9ea2-4912-b131-7733425e8ae2",
+      "name": "Sticky Note"
+    },
+    {
+      "parameters": {
+        "content": "## Prerequites\n- Friends' discord username and id need to be in the google sheet\n- Form link: https://docs.google.com/forms/d/e/1FAIpQLSfFso6D4E0cJqsk7CEe6AzL6eS771BcyhqpZ9Nf5A2UU9Apyw/viewform",
+        "width": 496
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -64,
+        -208
+      ],
+      "id": "71494041-fe02-4376-a2a9-381ed3a11063",
+      "name": "Sticky Note1"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://discord.com/api/v10/channels/1501418926834323620/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "=Authorization ",
+              "value": "Bot REDACTED"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "content",
+              "value": "=<@{{ $('Get user\\'s id using user\\'s name').item.json.ID }}> Thank you for practicing self-love today!. Here is Kate's answer: {{ $('Get my reponse').first().json.response }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        480,
+        560
+      ],
+      "id": "b07d663f-48ca-430a-ba0d-f63e74f262aa",
+      "name": "Send to the sever tagging the user"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://discord.com/api/v10/channels/1501418926834323620/messages",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "=Authorization ",
+              "value": "Bot REDACTED"
+            },
+            {
+              "name": "Content-Type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "content",
+              "value": "=Hey <@{{ $json.ID }}>, don't forget to show yourself some love today! Fill in your journal here: https://docs.google.com/forms/d/e/1FAIpQLSfFso6D4E0cJqsk7CEe6AzL6eS771BcyhqpZ9Nf5A2UU9Apyw/viewform"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        464,
+        48
+      ],
+      "id": "ceb7355c-473a-4fa3-8c98-519055c93c56",
+      "name": "Send to the sever tagging the user1"
+    },
+    {
+      "parameters": {
+        "content": "Once publish: Remember to go to google form/ apps script to change the webhook url to production\n",
+        "height": 96
+      },
+      "type": "n8n-nodes-base.stickyNote",
+      "typeVersion": 1,
+      "position": [
+        -400,
+        -160
+      ],
+      "id": "bc7a6d35-8904-474e-b53e-bf42e7aa16ed",
+      "name": "Sticky Note2"
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Daily at 9 PM": {
+      "main": [
+        [
+          {
+            "node": "Get All Friends",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get All Friends": {
+      "main": [
+        [
+          {
+            "node": "Filter Who Forgot to Journal",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter Who Forgot to Journal": {
+      "main": [
+        [
+          {
+            "node": "Send to the sever tagging the user1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Google Forms Webhook": {
+      "main": [
+        [
+          {
+            "node": "Update Last Submission Date",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get my reponse",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "Get user's id using user's name",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get my reponse": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Get user's id using user's name": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Send to the sever tagging the user",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "1a568c09-c985-4292-9e6d-e79ad829f5c8",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "1466962c76c476e27cea279401bfabd02fd2fafaf7b7f0dcb7dbf55257f6c4c6"
+  },
+  "id": "v0uiR3To8wpGzznt",
+  "tags": []
+}
