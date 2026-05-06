@@ -1,0 +1,1 @@
+# self-love-journaling-bot
